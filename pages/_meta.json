@@ -1,11 +1,6 @@
 {
   "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
-    "type": "page"
-  },
+  "what-is-graphql": "what-is-graphql",
   "contact": {
     "title": "Contact ↗",
     "type": "page",
