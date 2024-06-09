@@ -1,0 +1,175 @@
+## GraphQL Project 생성 및 신규 스키마 연동
+
+이번 문서에서는 간단한 GraphQL 프로젝트 를 생성하고, 신규 스키마를 연동해봅니다. 살펴볼 내용들은 아래와 같습니다.
+
+- GraphQL 라이브러리 생태계 현황
+- GraphQL Project 생성
+- 신규 스키마 생성 및 연동
+
+
+
+<br/>
+
+
+
+# GraphQL 라이브러리 생태계 현황
+
+현재는 더 이상 유지보수되지 않고 Archived 된 상태의 라이브러리들 (Deprecated)
+
+-  graphql-java / graphql-java-spring : https://github.com/graphql-java/graphql-java-spring
+- graphql-java-kickstart / graphql-spring-boot : https://github.com/graphql-java-kickstart/graphql-spring-boot
+
+<br/>
+
+위의 라이브러리들을 기반으로 조금 더 통합되고 유지보수가 편리하도록 Spring / Netflix 에서 제공하게 된 라이브러리 들은 아래와 같습니다.
+
+- spring-project / spring-graphql : https://github.com/spring-projects/spring-graphql
+- Netflix / dgs-framework : https://github.com/Netflix/dgs-framework
+
+<br/>
+
+이번 문서에서는 GraphQL Project 생성시 spring-graphql 을 사용합니다.<br/>
+
+<br/>
+
+
+
+# GraphQL Project 생성
+
+## 프로젝트 생성
+
+start.spring.io 에서 선택한 라이브러리는 아래와 같습니다.
+
+![](./img/1-graphql-project-setup-and-applying-new-schema/1.png)
+
+<br/>
+
+위에서 선택한 라이브러리 외에도 별도로 추가해준 라이브러리가 있는데,  `전체 의존성` 챕터에서 정리합니다.<br/>
+
+
+
+## 전체 의존성
+
+build.gradle.kts
+
+```kotlin
+plugins {
+	java
+	id("org.springframework.boot") version "3.3.0"
+	id("io.spring.dependency-management") version "1.1.5"
+}
+
+group = "io.chagchagchag.graphql"
+version = "0.0.1-SNAPSHOT"
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom(configurations.annotationProcessor.get())
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-graphql")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	// (1) security 
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
+	// (2) graphql-scalars
+	implementation("com.graphql-java:graphql-java-extended-scalars:21.0")
+
+	// h2
+	runtimeOnly("com.h2database:h2")
+
+	// lombok
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework:spring-webflux")
+	testImplementation("org.springframework.graphql:spring-graphql-test")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// webflux test
+	testImplementation("org.springframework:spring-webflux")
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+```
+
+<br/>
+
+
+
+(1) : `org.springframework.boot:spring-boot-starter-security` 
+
+- graphql 에서의 인증 방식을 정리하기 위해 추가했습니다.
+
+<br/>
+
+
+
+(2) : `com.graphql-java:graphql-java-extended-scalars:21.0` 
+
+- graphql java 라이브러리를 위한 추가적인 Scalar 타입을 제공하는 라이브러리
+- `spring-boot-starter-graphql` 에서 기본으로 제공되는 graphql 스펙에는 기본적인 Scalar 타입들(Int, Float, String, Boolean, ID)이 포함되어 있습니다. 
+- `graphql-java-extended-scalars` 라이브러리에서는 Date, DateTime, Time, Json, BigDecimal, BigInteger 등과 같은 다양한 타입을 추가적으로 제공합니다. 
+
+<br/>
+
+
+
+## 신규 스키마 생성 및 연동
+
+graphql 프로젝트를 생성하면 아래와 같이 `src/main/resources/graphql` 디렉터리가 생성된 상태로 프로젝트가 생성됩니다. 만약 `src/main/resources/graphql` 디렉터리가 없다면 새로 생성해주시기 바랍니다.
+
+![](./img/1-graphql-project-setup-and-applying-new-schema/2.png)
+
+<br/>
+
+
+
+### 스키마 생성
+
+> 참고: Intellij 내의 GraphQL 플러그인을 설치하시면 조금 더 쉽게 스키마를 작성 가능합니다.<br/>
+>
+> ![](./img/1-graphql-project-setup-and-applying-new-schema/3.png)
+
+<br/>
+
+
+
+**schema.graphqls**<br/>
+
+`src/main/resources/graphql/schema.graphqls` 파일을 생성하고 아래와 같이 스키마를 정의합니다.
+
+```plain
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
